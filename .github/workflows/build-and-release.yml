@@ -52,5 +52,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./your-deb-file.deb
-          asset_name: your-deb-file.deb
+          asset_name: uploadfile.deb
           asset_content_type: application/octet-stream
