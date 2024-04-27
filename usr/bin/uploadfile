@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Check if a file argument is provided
+if [ $# -ne 1 ]; then
+    echo "Usage: uploadfile [file]"
+    exit 1
+fi
+
+# Upload the file to 0x0.st using curl
+curl -F "file=@$1" https://0x0.st
