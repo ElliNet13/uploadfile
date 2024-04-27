@@ -1,0 +1,56 @@
+name: Build and Release Deb File
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Check if commit starts with "[nodeb]"
+        run: |
+          commit_message=$(git log --format=%B -n 1 $GITHUB_SHA)
+          if [[ "$commit_message" =~ ^\[nodeb\] ]]; then
+            echo "Commit starts with [nodeb]. Skipping further steps."
+            exit 0
+          fi
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential # Example dependency
+          sudo apt-get install -y debhelper # Example dependency
+          # Add more dependencies if needed
+
+      - name: Build deb file
+        run: |
+          dpkg-deb --build . your-deb-file.deb
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release ${{ github.run_number }}
+          body: |
+            Release ${{ github.run_number }}
+          draft: false
+          prerelease: false
+
+      - name: Upload deb file to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./your-deb-file.deb
+          asset_name: your-deb-file.deb
+          asset_content_type: application/octet-stream
