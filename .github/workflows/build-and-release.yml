@@ -51,7 +51,7 @@ jobs:
 
       - name: Build deb file
         run: |
-          dpkg-deb --build . your-deb-file.deb
+          dpkg-deb --build . uploadfile.deb
 
       - name: Create release
         id: create_release
@@ -72,6 +72,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_KEY }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./your-deb-file.deb
+          asset_path: ./uploadfile.deb
           asset_name: uploadfile.deb
           asset_content_type: application/octet-stream
