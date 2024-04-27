@@ -24,18 +24,23 @@ jobs:
             exit 0
           fi
 
+      - name: Check if dependencies are cached
+        id: check_cache
+        uses: actions/cache@v2
+        with:
+          path: /var/cache/apt
+          key: ${{ runner.os }}-apt-${{ hashFiles('**/apt.txt') }}
+        # Persist dependencies across steps
+        env:
+          DEBIAN_FRONTEND: noninteractive
+
       - name: Install dependencies
-        if: steps.cache_dependencies.outputs.cache-hit != 'true'
-        id: cache_dependencies
+        if: steps.check_cache.outputs.cache-hit != 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential # Example dependency
           sudo apt-get install -y debhelper # Example dependency
           # Add more dependencies if needed
-          echo "::set-output name=cache-hit::true"
-        # Persist dependencies across steps
-        env:
-          DEBIAN_FRONTEND: noninteractive
         # Cache apt packages to speed up subsequent runs
         uses: actions/cache@v2
         with:
