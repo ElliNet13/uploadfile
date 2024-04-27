@@ -30,9 +30,6 @@ jobs:
         with:
           path: /var/cache/apt
           key: ${{ runner.os }}-apt-${{ hashFiles('**/apt.txt') }}
-        # Persist dependencies across steps
-        env:
-          DEBIAN_FRONTEND: noninteractive
 
       - name: Install dependencies
         if: steps.check_cache.outputs.cache-hit != 'true'
@@ -41,7 +38,9 @@ jobs:
           sudo apt-get install -y build-essential # Example dependency
           sudo apt-get install -y debhelper # Example dependency
           # Add more dependencies if needed
-        # Cache apt packages to speed up subsequent runs
+
+      - name: Cache dependencies
+        if: steps.check_cache.outputs.cache-hit != 'true'
         uses: actions/cache@v2
         with:
           path: /var/cache/apt
