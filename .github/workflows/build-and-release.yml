@@ -13,6 +13,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Make usr/bin executeable
+        run: chmod +x usr/bin/*
+
       - name: Check if commit starts with "[nodeb]"
         run: |
           commit_message=$(git log --format=%B -n 1 $GITHUB_SHA)
