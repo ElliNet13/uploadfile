@@ -3,13 +3,31 @@
 import argparse
 import requests
 import sys
+import time
 
-def upload_file(file_path):
-    
+def upload_file(file_path, secret=None, expireh=None, expiremsse=None):
     try:
         with open(file_path, "rb") as f:
             files = {"file": f}
-            response = requests.post("https://0x0.st", files=files)
+            data = {}
+
+            # Add expire field if expireh is specified (in hours)
+            if expireh is not None:
+                try:
+                    data['expire'] = int(expireh) * 3600  # Convert hours to seconds
+                except ValueError:
+                    print("Error: Invalid expireh value.")
+                    sys.exit(1)
+
+            # Add expire field if expiremsse is specified (in ms since epoch)
+            if expiremsse is not None:
+                try:
+                    data['expire'] = int(expiremsse)
+                except ValueError:
+                    print("Error: Invalid expiremsse value.")
+                    sys.exit(1)
+
+            response = requests.post("https://0x0.st", files=files, data=data)
 
         if response.status_code == 200:
             print(f"File uploaded successfully: {response.text.strip()}")
@@ -28,12 +46,14 @@ def main():
     # Set up argument parser
     parser = argparse.ArgumentParser(description="Upload a file to 0x0.st")
     parser.add_argument("file", help="The file to upload")
-    
+    parser.add_argument("--expireh", help="Set an expiration time in hours")
+    parser.add_argument("--expiremsse", help="Set an expiration time in milliseconds since epoch")
+
     # Parse arguments
     args = parser.parse_args()
     
     # Upload the file
-    upload_file(args.file)
+    upload_file(args.file, secret=args.secret, expireh=args.expireh, expiremsse=args.expiremsse)
 
 if __name__ == "__main__":
     main()
