@@ -53,7 +53,7 @@ def main():
     args = parser.parse_args()
     
     # Upload the file
-    upload_file(args.file, secret=args.secret, expireh=args.expireh, expiremsse=args.expiremsse)
+    upload_file(args.file, expireh=args.expireh, expiremsse=args.expiremsse)
 
 if __name__ == "__main__":
     main()
