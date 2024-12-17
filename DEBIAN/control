@@ -1,5 +1,5 @@
 Package: uploadfile
-Version: 1.2
+Version: 1.3
 Architecture: all
 Maintainer: ElliNet13 <ellinet-apps-feedback@googlegroups.com>
 Description: Upload files to https://0x0.st for sharing with a link. The command is: uploadfile [filename]
