@@ -1,10 +1,39 @@
-#!/bin/bash
+#!/usr/bin/env python3
 
-# Check if a file argument is provided
-if [ $# -ne 1 ]; then
-    echo "Usage: uploadfile [file]"
-    exit 1
-fi
+import argparse
+import requests
+import sys
 
-# Upload the file to 0x0.st using curl
-curl -F "file=@$1" https://0x0.st
+def upload_file(file_path):
+    
+    try:
+        with open(file_path, "rb") as f:
+            files = {"file": f}
+            response = requests.post("https://0x0.st", files=files)
+
+        if response.status_code == 200:
+            print(f"File uploaded successfully: {response.text.strip()}")
+        else:
+            print(f"Failed to upload file. Status code: {response.status_code}")
+            print(response.text)
+
+    except FileNotFoundError:
+        print(f"Error: File '{file_path}' not found.")
+        sys.exit(1)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        sys.exit(1)
+
+def main():
+    # Set up argument parser
+    parser = argparse.ArgumentParser(description="Upload a file to 0x0.st")
+    parser.add_argument("file", help="The file to upload")
+    
+    # Parse arguments
+    args = parser.parse_args()
+    
+    # Upload the file
+    upload_file(args.file)
+
+if __name__ == "__main__":
+    main()
